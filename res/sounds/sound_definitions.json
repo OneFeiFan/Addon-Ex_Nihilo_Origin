@@ -1,0 +1,29 @@
+{
+  "format_version": "1.20.20",
+  "sound_definitions": {
+    "eno.sieve": {
+      "category": "block",
+      "sounds": [
+        {
+          "name": "sounds/eno/sieve"
+        }
+      ]
+    },
+    "eno.meshbreak": {
+      "category": "block",
+      "sounds": [
+        {
+          "name": "sounds/eno/meshbreak"
+        }
+      ]
+    },
+    "eno.grass": {
+      "category": "block",
+      "sounds": [
+        {
+          "name": "sounds/eno/grass"
+        }
+      ]
+    }
+  }
+}

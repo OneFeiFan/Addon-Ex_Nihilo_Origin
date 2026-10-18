@@ -1,0 +1,22 @@
+# 依赖
+node_modules/
+
+# Sapdon 构建输出与临时文件
+dev/
+.tmp/
+res.hint.ts
+
+# 日志
+*.log
+npm-debug.log*
+
+# Python 缓存（tools/ 下的生成脚本）
+__pycache__/
+*.py[cod]
+
+# 系统与编辑器
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
