@@ -20,3 +20,8 @@ Thumbs.db
 desktop.ini
 .vscode/
 .idea/
+
+# 本地规划文件（planning-with-files）
+/task_plan.md
+/findings.md
+/progress.md
