@@ -76,3 +76,7 @@ infestedLeaves('eno:infested_leaves', 'eno_infested', 'eno:infested')      // ex
 block('eno:copper_gravel', 'eno_ex_Coppergravel_0', { category: 'nature', group: 'eno:itemGroup.name.ore_gravel', hardness: 0.6, explosion: 0.6, sound: 'gravel', tools: ['shovel'] })
 block('eno:copper_sand', 'eno_ex_Coppersand_0', { category: 'nature', group: 'eno:itemGroup.name.ore_sand', hardness: 0.5, explosion: 0.5, sound: 'sand', tools: ['shovel'] })
 block('eno:copper_dust', 'eno_ex_Copperdust_0', { category: 'nature', group: 'eno:itemGroup.name.ore_dust', hardness: 0.5, explosion: 0.5, sound: 'sand', tools: ['shovel'] })
+
+// ---- 2.6 深板岩 / 凝灰岩链：锤原版深板岩 / 凝灰岩得到的"粉碎"方块，可以筛 ----
+block('eno:crushed_deepslate', 'eno_crushed_deepslate', { category: 'nature', hardness: 0.6, explosion: 0.6, sound: 'gravel', tools: ['shovel'] })
+block('eno:crushed_tuff', 'eno_crushed_tuff', { category: 'nature', hardness: 0.6, explosion: 0.6, sound: 'gravel', tools: ['shovel'] })

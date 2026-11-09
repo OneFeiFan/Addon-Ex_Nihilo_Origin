@@ -34,6 +34,8 @@ world.beforeEvents.playerInteractWithBlock.subscribe((ev) => {
     if (ground === 'minecraft:farmland' && PLANT[item]) action = () => above.setPermutation(BlockPermutation.resolve(PLANT[item]))
     if (item === 'eno:seeds_canes' && (SOIL.has(ground) || SAND.has(ground))) action = () => { const p = resolve('minecraft:reeds', 'minecraft:sugar_cane'); if (p) above.setPermutation(p) }
     if (item === 'eno:spores' && SOIL.has(ground)) action = () => block.setType('minecraft:mycelium')
+    // 2.5：孢子对着菌丝右键，长出一朵蘑菇（棕色、红色各半）；之后由原版的蘑菇扩散接手。发酵蛛眼要用棕色蘑菇
+    if (item === 'eno:spores' && ground === 'minecraft:mycelium') action = () => above.setType(Math.random() < 0.5 ? 'minecraft:brown_mushroom' : 'minecraft:red_mushroom')
     if (item === 'eno:seeds_cactus' && SAND.has(ground)) action = () => above.setType('minecraft:cactus')
     if (item === 'eno:seeds_chorus' && ground === 'minecraft:end_stone') action = () => above.setType('eno:chorus_sprout')
     if (!action) return

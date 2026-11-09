@@ -52,7 +52,24 @@ VAN_ITEM = {
     'poisonous_potato': 'potato_poisonous', 'salmon': 'fish_salmon_raw', 'cooked_salmon': 'fish_salmon_cooked', 'tropical_fish': 'fish_clownfish_raw',
     'pufferfish': 'fish_pufferfish_raw', 'mutton': 'mutton_raw', 'cooked_mutton': 'mutton_cooked', 'rabbit': 'rabbit_raw', 'cooked_rabbit': 'rabbit_cooked',
     'string': 'string', 'sugar_cane': 'reeds', 'bamboo': 'bamboo', 'kelp': 'kelp', 'sea_pickle': 'sea_pickle', 'glowstone': 'glowstone_dust',
-    'iron_block': 'iron_ingot', 'stick': 'stick', 'copper_ingot': 'copper_ingot', 'ender_pearl': 'ender_pearl',
+    'iron_block': 'iron_ingot', 'stick': 'stick', 'copper_ingot': 'copper_ingot', 'ender_pearl': 'ender_pearl', 'beetroot_seeds': 'seeds_beetroot', 'amethyst_shard': 'amethyst_shard', 'iron_nugget': 'iron_nugget',
+    'fermented_spider_eye': 'spider_eye_fermented', 'glass_bottle': 'potion_bottle_empty', 'splash_weakness': 'potion_bottle_splash_weakness',
+    'splash_poison': 'potion_bottle_splash_poison', 'splash_slowness': 'potion_bottle_splash_moveSlowdown',
+}
+VAN_ALIAS = {   # 贴图文件名与物品 ID 不同的
+    'short_grass': 'tallgrass', 'fern': 'fern', 'deadbush': 'deadbush', 'cornflower': 'flower_cornflower', 'lily_of_the_valley': 'flower_lily_of_the_valley',
+    'beetroot': 'beetroot', 'hay_block': 'hay_block_side', 'dried_kelp_block': 'dried_kelp_side_a', 'mangrove_leaves': 'mangrove_leaves',
+    'azalea_leaves': 'azalea_leaves', 'azalea_leaves_flowered': 'azalea_leaves_flowers', 'moss_block': 'moss_block', 'moss_carpet': 'moss_block',
+    'pale_moss_block': 'pale_moss_block', 'pale_moss_carpet': 'pale_moss_block', 'nether_wart_block': 'nether_wart_block', 'warped_wart_block': 'warped_wart_block',
+    'brown_mushroom_block': 'mushroom_block_skin_brown', 'red_mushroom_block': 'mushroom_block_skin_red', 'mushroom_stem': 'mushroom_block_skin_stem',
+    'crimson_fungus': 'crimson_fungus', 'warped_fungus': 'warped_fungus', 'nether_sprouts': 'nether_sprouts', 'chorus_fruit': 'chorus_fruit',
+    'chorus_flower': 'chorus_flower', 'seagrass': 'seagrass', 'tube_coral': 'coral_plant_blue', 'brain_coral': 'coral_plant_pink',
+    'bubble_coral': 'coral_plant_purple', 'fire_coral': 'coral_plant_red', 'horn_coral': 'coral_plant_yellow', 'tube_coral_fan': 'coral_fan_blue',
+    'brain_coral_fan': 'coral_fan_pink', 'bubble_coral_fan': 'coral_fan_purple', 'fire_coral_fan': 'coral_fan_red', 'horn_coral_fan': 'coral_fan_yellow',
+    'tube_coral_block': 'coral_blue', 'brain_coral_block': 'coral_pink', 'bubble_coral_block': 'coral_purple', 'fire_coral_block': 'coral_red',
+    'horn_coral_block': 'coral_yellow', 'small_dripleaf_block': 'small_dripleaf_side', 'big_dripleaf': 'big_dripleaf_top',
+    'azalea': 'azalea_side', 'flowering_azalea': 'flowering_azalea_side', 'open_eyeblossom': 'eyeblossom_blooming', 'closed_eyeblossom': 'eyeblossom_dormant',
+    'mangrove_roots': 'mangrove_roots_side', 'pale_hanging_moss': 'pale_hanging_moss_tip', 'pitcher_plant': 'pitcher_crop_top', 'twisting_vines': 'twisting_vines_bottom',
 }
 VAN_FLAT_BLOCK = {   # 植物类：画成平面贴图
     'dandelion': ('flower_dandelion', None), 'poppy': ('flower_rose', None), 'blue_orchid': ('flower_blue_orchid', None), 'allium': ('flower_allium', None),
@@ -64,6 +81,8 @@ VAN_FLAT_BLOCK = {   # 植物类：画成平面贴图
     'oak_sapling': ('sapling_oak', None), 'spruce_sapling': ('sapling_spruce', None), 'birch_sapling': ('sapling_birch', None),
     'jungle_sapling': ('sapling_jungle', None), 'acacia_sapling': ('sapling_acacia', None), 'dark_oak_sapling': ('sapling_roofed_oak', None),
     'torch': ('torch_on', None), 'fire': ('fire_0', None),
+    'small_amethyst_bud': ('small_amethyst_bud', None), 'medium_amethyst_bud': ('medium_amethyst_bud', None),
+    'large_amethyst_bud': ('large_amethyst_bud', None), 'amethyst_cluster': ('amethyst_cluster', None),
 }
 VAN_CUBE = {
     'dirt': 'dirt', 'gravel': 'gravel', 'sand': 'sand', 'red_sand': 'red_sand', 'soul_sand': 'soul_sand', 'cobblestone': 'cobblestone', 'stone': 'stone',
@@ -73,7 +92,8 @@ VAN_CUBE = {
     'cactus': ('cactus_top', 'cactus_side'), 'melon_block': ('melon_top', 'melon_side'), 'pumpkin': ('pumpkin_top', 'pumpkin_face_off'),
     'oak_leaves': 'leaves_oak_carried', 'spruce_leaves': 'leaves_spruce_carried', 'birch_leaves': 'leaves_birch_carried', 'jungle_leaves': 'leaves_jungle_carried',
     'acacia_leaves': 'leaves_acacia_carried', 'dark_oak_leaves': 'leaves_big_oak_carried', 'gold_block': 'gold_block', 'iron_block': 'iron_block',
-    'lava': 'lava_still', 'flowing_lava': 'lava_flow', 'ancient_debris': ('ancient_debris_top', 'ancient_debris_side'),
+    'lava': 'lava_still', 'flowing_lava': 'lava_flow', 'deepslate': ('deepslate/deepslate_top', 'deepslate/deepslate'), 'tuff': 'tuff',
+    'cobbled_deepslate': 'deepslate/cobbled_deepslate', 'amethyst_block': 'amethyst_block', 'ancient_debris': ('ancient_debris_top', 'ancient_debris_side'),
 }
 UI = lambda n: Image.open(os.path.join(OUT, n + '.png')).convert('RGBA')
 ALIAS = {   # 没有普通物品图标的：蚕是动态图标物品，坩埚是模型方块
@@ -105,6 +125,10 @@ def icon(i, size=32):
         elif name in VAN_CUBE:
             v = VAN_CUBE[name]; up, side = (v, v) if isinstance(v, str) else v
             img = cube_icon(G.van(f'blocks/{up}'), G.van(f'blocks/{side}'))
+        elif ns == 'minecraft':   # 没登记的原版物品：依次试物品贴图、方块贴图（平面）
+            for rel in (f'items/{VAN_ALIAS.get(name, name)}', f'blocks/{VAN_ALIAS.get(name, name)}'):
+                try: img = G.van(rel); break
+                except Exception: img = None
     except Exception as e:
         print('  图标失败', i, e)
     if img is None:
@@ -135,10 +159,10 @@ def drops_sheet(name, input_id, machine_img, drops):
     c = Image.new('RGBA', (S, S), (0, 0, 0, 0))
     item_slot(c, input_id, 70, 30, size=44); arrow(c, 100, 30, 136); paste(c, fit(machine_img, 52), 168, 30); arrow(c, 198, 30, 232)
     drops = sorted(drops, key=lambda d: -d[3])          # 概率高的排前面
-    cols, cw = (4, 70) if len(drops) <= 12 else (5, 56)  # 超过 12 种时改 5 列，保证 3 行放得下
+    cols, cw = (4, 70) if len(drops) <= 12 else (5, 56) if len(drops) <= 15 else (6, 46)  # 种类多时加列，保证 3 行放得下
     top, rh = 80, 64
     for k, (it, lo, hi, ch) in enumerate(drops):
-        cx, cy = (39 if cols == 4 else 32) + (k % cols) * cw, top + (k // cols) * rh
+        cx, cy = {4: 39, 5: 32, 6: 29}[cols] + (k % cols) * cw, top + (k // cols) * rh
         item_slot(c, it, cx, cy, size=38, count=None if lo == hi == 1 else (str(lo) if lo == hi else f'{lo}-{hi}'), chance=pct(ch))
     c.save(os.path.join(OUT, f'jei_{name}.png')); return name
 def rows_sheet(name, rows):
@@ -175,8 +199,8 @@ def main():
     made = []
     sv = sieve_data(); sieve, heavy = UI('sieve'), UI('heavysieve')
     for inp, nm in (('minecraft:dirt', 'sieve_dirt'), ('minecraft:gravel', 'sieve_gravel'), ('minecraft:sand', 'sieve_sand'), ('eno:dust', 'sieve_dust'),
-                    ('minecraft:soul_sand', 'sieve_soul_sand'), ('eno:gravel_nether', 'sieve_nether'), ('eno:gravel_ender', 'sieve_ender')):
-        made.append(drops_sheet(nm, inp, sieve, sv[inp][:15]))
+                    ('minecraft:soul_sand', 'sieve_soul_sand'), ('eno:gravel_nether', 'sieve_nether'), ('eno:gravel_ender', 'sieve_ender'), ('minecraft:red_sand', 'sieve_red_sand'), ('eno:crushed_deepslate', 'sieve_crushed_deepslate'), ('eno:crushed_tuff', 'sieve_crushed_tuff')):
+        made.append(drops_sheet(nm, inp, sieve, sv[inp][:18]))
     # 重型筛：压缩方块，每次相当于普通筛 6 次（这里列压缩泥土、压缩沙砾作代表）
     made.append(drops_sheet('heavy_dirt', 'eno:compressed_dirt', heavy, sv['eno:compressed_dirt'][:15]))
     made.append(drops_sheet('heavy_gravel', 'eno:compressed_gravel', heavy, sv['eno:compressed_gravel'][:15]))
@@ -196,11 +220,12 @@ def main():
     made.append(rows_sheet('crook_oak', [([(ck, None), ('minecraft:oak_leaves', None)], None, [('minecraft:oak_sapling', None, pct(s)), ('minecraft:apple', None, pct(a)), ('eno:silk_worm', None, pct(w))]) for ck, s, a, w in crooks] +
                            [([('eno:crook_wood', None), ('minecraft:jungle_leaves', None)], None, [('minecraft:jungle_sapling', None, '12%'), ('minecraft:vine', None, '1%'), ('eno:silk_worm', None, '2%')])]))
     # 木桶：堆肥（标"装满需要几个"）
-    comp_items = []
-    b = read('scripts/data/barrel.ts')
-    for w in ('oak', 'spruce', 'birch', 'jungle', 'acacia', 'dark_oak'): comp_items.append((f'minecraft:{w}_sapling', 125))
-    for w in ('oak', 'spruce', 'birch', 'jungle', 'acacia', 'dark_oak'): comp_items.append((f'minecraft:{w}_leaves', 125))
-    comp_items += [(i, float(v)) for i, v, _ in re.findall(r"compost\('([^']+)', ([\d.]+), (\d+)\)", b)]
+    # 堆肥列表直接从 scripts/data/barrel.ts 读（node 导出，顺序与数据文件一致）
+    import subprocess, json as _json
+    out = subprocess.run(['node', '--experimental-strip-types', '-e',
+                          "import('./scripts/data/barrel.ts').then(b=>console.log(JSON.stringify(Object.entries(b.COMPOST).map(([k,v])=>[k,v.volume]))))"],
+                         cwd=ROOT, capture_output=True, text=True).stdout
+    comp_items = _json.loads(out.strip().splitlines()[-1])
     need = lambda v: str(int(-(-1000 // v)))
     labelled = [(i, 'x' + need(v)) for i, v in comp_items]
     for k in range(0, len(labelled), 30): made.append(grid_sheet(f'compost_{k // 30 + 1}', labelled[k:k + 30]))   # 每张 6 × 5
@@ -224,10 +249,11 @@ def main():
         ([('minecraft:gravel', '4')], UI('crucible'), [('minecraft:lava_bucket', None, None)]),
     ]))
     made.append(rows_sheet('crucible_heat', [([(h, None)], None, [('eno:crucible_lava', None, v)]) for h, v in
-                                             (('minecraft:torch', 'x1'), ('minecraft:fire', 'x1.5'), ('minecraft:lava', 'x2.5'), ('minecraft:flowing_lava', 'x3'))]))
+                                             (('minecraft:torch', 'x1'), ('minecraft:fire', 'x1.5'), ('minecraft:flowing_lava', 'x2.5'), ('minecraft:lava', 'x3'))]))
     made.append(rows_sheet('oak_crucible', [
         ([('minecraft:oak_sapling', '8')], UI('oak_crucible'), [('minecraft:water_bucket', None, None)]),
         ([('minecraft:oak_leaves', '4')], UI('oak_crucible'), [('minecraft:water_bucket', None, None)]),
+        ([('minecraft:cactus', '2')], UI('oak_crucible'), [('minecraft:water_bucket', None, None)]),
     ]))
     # 熔炉（本模组的熔炉配方）
     fur = UI('furnace')
@@ -235,6 +261,33 @@ def main():
     row = lambda a, b, n: ([(a, None)], fur, [(b, n if n and n != '1' else None, None)])
     made.append(rows_sheet('smelt_ore', [row(a, b, n) for a, b, n in sm if a in ('eno:iron_gravel', 'eno:copper_gravel', 'eno:gold_gravel', 'eno:copper_sand', 'eno:iron_dust')]))
     made.append(rows_sheet('smelt_other', [row(a, b, n) for a, b, n in sm if a in ('eno:ore_salts_iron', 'eno:ore_salts_copper', 'eno:dust_saw', 'eno:silk_worm', 'eno:crucible_raw')]))
+    # 深板岩 / 凝灰岩链
+    made.append(rows_sheet('deep_chain', [
+        ([('minecraft:deepslate', None)], ham, [('eno:crushed_deepslate', None, None)]),
+        ([('eno:crushed_deepslate', None)], ham, [('eno:deepslate_pebble', '3-5', None)]),
+        ([('eno:deepslate_pebble', '4'), ('minecraft:cobblestone', None)], None, [('minecraft:deepslate', '2', None)]),
+        ([('eno:deepslate_pebble', '2'), ('eno:stone_small', '2')], None, [('minecraft:deepslate', None, None)]),
+    ]))
+    made.append(rows_sheet('tuff_chain', [
+        ([('eno:tuff_pebble', '4')], None, [('minecraft:tuff', None, None)]),
+        ([('minecraft:tuff', None)], ham, [('eno:crushed_tuff', None, None)]),
+    ]))
+    # 紫水晶：岩浆 + 碎片 → 母岩溶液 → 长芽（4 级）→ 簇（镐子挖掉 4 个碎片）；溶液凝固 → 2–3 个碎片
+    made.append(rows_sheet('geode', [
+        ([('minecraft:lava_bucket', None), ('minecraft:amethyst_shard', None)], UI('barrel'), [('eno:barrel_geode', None, None)]),
+        ([('eno:barrel_geode', None)], None, [('minecraft:small_amethyst_bud', None, None), ('minecraft:medium_amethyst_bud', None, None), ('minecraft:large_amethyst_bud', None, None), ('minecraft:amethyst_cluster', None, None)]),
+        ([('minecraft:amethyst_cluster', None)], None, [('minecraft:amethyst_shard', '4', None)]),
+        ([('minecraft:amethyst_block', None)], None, [('minecraft:amethyst_shard', '2-3', None)]),
+    ]))
+    # 炼药：女巫水 + 效果材料（+ 修饰）→ 3 瓶喷溅药水
+    oak = UI('oak_crucible')
+    made.append(rows_sheet('brew', [
+        ([('eno:bucket_witch_water', None), ('minecraft:fermented_spider_eye', None)], oak, [('minecraft:splash_weakness', '3', None)]),
+        ([('eno:bucket_witch_water', None), ('minecraft:spider_eye', None)], oak, [('minecraft:splash_poison', '3', None)]),
+        ([('eno:bucket_witch_water', None), ('minecraft:slime_ball', None)], oak, [('minecraft:splash_slowness', '3', None)]),
+        ([('minecraft:splash_poison', None), ('minecraft:redstone', None)], None, [('minecraft:splash_poison', None, None)]),
+        ([('minecraft:splash_slowness', None), ('minecraft:glowstone_dust', None)], None, [('minecraft:splash_slowness', None, None)]),
+    ]))
     # 盐：粗盐 → 卤水 → 加灰烬沉淀 → 粉盐 → 矿盐晶体 → 8 个锭
     made.append(rows_sheet('salt', [
         ([('minecraft:water_bucket', None), ('eno:salt_crude', '4')], UI('barrel_water'), [('eno:barrel_brine', None, None)]),

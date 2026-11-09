@@ -10,9 +10,8 @@ sieveGroup('ex', {
         { id: 'eno:mesh_flint', texture: 'eno_ex_sieveFlintMesh_0' },
         { id: 'eno:mesh_iron', texture: 'eno_ex_sieveIronMesh_0' },
         { id: 'eno:mesh_diamond', texture: 'eno_ex_sieveDiamondMesh_0' },
-        { id: 'eno:mesh_copper', texture: 'eno_ex_sieveCopperMesh_0' },   // 2.4 新增；排在最后，已放置的筛子里的网编号不变
     ],
-    contents: ['eno_v_dirt', 'eno_v_sand', 'eno_v_gravel', 'eno_v_soul_sand', 'eno_ex_dust_0', 'eno_ex_gravelNether_0', 'eno_ex_gravelEnder_0'],   // 2.4：粗盐方块移除
+    contents: ['eno_v_dirt', 'eno_v_sand', 'eno_v_gravel', 'eno_v_soul_sand', 'eno_ex_dust_0', 'eno_ex_gravelNether_0', 'eno_ex_gravelEnder_0', 'eno_v_red_sand', 'eno_crushed_deepslate', 'eno_crushed_tuff'],   // 2.4：粗盐方块移除；2.5：红沙
 })
 sieveGroup('co', {
     meshes: [
@@ -20,7 +19,6 @@ sieveGroup('co', {
         { id: 'eno:meshco_flint', texture: 'eno_ex_sievecoFlintMesh_0' },
         { id: 'eno:meshco_iron', texture: 'eno_ex_sievecoIronMesh_0' },
         { id: 'eno:meshco_diamond', texture: 'eno_ex_sievecoDiamondMesh_0' },
-        { id: 'eno:meshco_copper', texture: 'eno_ex_sievecoCopperMesh_0' },
     ],
     contents: ['eno_ex_compressed_dirt_0', 'eno_ex_compressed_dust_0', 'eno_ex_compressed_sand_0', 'eno_ex_compressed_gravel_0', 'eno_ex_compressed_soul_sand_0'],
 })

@@ -7,7 +7,7 @@ import { isCreative } from '../lib/tool.js'
 import { oreCount } from '../lib/rules.js'
 
 const HAMMER_SET = new Set(HAMMERS)
-interface Pending { dim: string, loc: Vector3, tick: number, out: string, count: number | 'ore', done?: boolean }
+interface Pending { dim: string, loc: Vector3, tick: number, out: string, count: number | 'ore' | [number, number], done?: boolean }
 const pending: Pending[] = []
 // 我们自己生成的转换产物：生成后也会触发 entitySpawn，必须跳过，否则会被当成原版掉落物删掉
 const ownDrops = new Set<string>()
@@ -35,7 +35,7 @@ world.afterEvents.playerBreakBlock.subscribe(({ block, dimension }) => {
     if (!p) return
     p.done = true
     system.runTimeout(() => {
-        const n = p.count === 'ore' ? oreCount() : p.count
+        const n = p.count === 'ore' ? oreCount() : Array.isArray(p.count) ? p.count[0] + Math.floor(Math.random() * (p.count[1] - p.count[0] + 1)) : p.count
         const drop = dimension.spawnItem(new ItemStack(p.out, n), { x: p.loc.x + 0.5, y: p.loc.y + 0.5, z: p.loc.z + 0.5 })
         ownDrops.add(drop.id)
         system.runTimeout(() => ownDrops.delete(drop.id), 5)

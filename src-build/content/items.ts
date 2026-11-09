@@ -77,7 +77,7 @@ hammer('eno:hammers_stone', 'eno_enr_hammers_stone_0', { durability: 132, tier: 
 hammer('eno:hammers_iron', 'eno_enr_hammers_iron_0', { durability: 251, tier: 'iron', speed: 6, damage: 6 }, { group: 'eno:itemGroup.name.hammer' })  // ex_hammersIron · Iron Hammer
 hammer('eno:hammers_gold', 'eno_enr_hammers_gold_0', { durability: 33, tier: 'golden', speed: 12, damage: 4 }, { group: 'eno:itemGroup.name.hammer' })  // ex_hammersGold · Gold Hammer
 hammer('eno:hammers_diamond', 'eno_enr_hammers_diamond_0', { durability: 1562, tier: 'diamond', speed: 8, damage: 7 }, { group: 'eno:itemGroup.name.hammer' })  // ex_hammersDiamond · Diamond Hammer
-hammer('eno:hammers_copper', 'eno_enr_hammers_copper_0', { durability: 190, tier: 'stone', speed: 5, damage: 4 }, { group: 'eno:itemGroup.name.hammer' })  // ex_hammersCopper · Copper Hammer
+hammer('eno:hammers_copper', 'eno_enr_hammers_copper_0', { durability: 175, tier: 'wooden', speed: 4, damage: 3 }, { group: 'eno:itemGroup.name.hammer' })  // ex_hammersCopper · Copper Hammer
 hammer('eno:hammers_tin', 'eno_enr_hammers_tin_0', { durability: 200, tier: 'wooden', speed: 5, damage: 3 }, { group: 'eno:itemGroup.name.hammer' })  // ex_hammersTin · Tin Hammer
 hammer('eno:hammers_lead', 'eno_enr_hammers_lead_0', { durability: 150, tier: 'wooden', speed: 5, damage: 3 }, { group: 'eno:itemGroup.name.hammer' })  // ex_hammersLead · Lead Hammer
 hammer('eno:hammers_silver', 'eno_enr_hammers_silver_0', { durability: 200, tier: 'stone', speed: 6, damage: 4 }, { group: 'eno:itemGroup.name.hammer' })  // ex_hammersSilver · Silver Hammer
@@ -140,5 +140,12 @@ item('eno:copper_crushed', 'eno_ex_coppercrushed_0', { group: 'eno:itemGroup.nam
 item('eno:copper_powdered', 'eno_ex_copperpowdered_0', { group: 'eno:itemGroup.name.ore_powdered' }) // 铜矿石粉末
 item('eno:salt_crude', 'eno_salt_crude', { group: 'eno:itemGroup.name.salts' })                     // 粗盐：筛尘土 / 沙子 / 沙砾的副产物
 item('eno:debris_fragment', 'eno_debris_fragment')                                                   // 远古残骸碎片：4 个合成 1 块远古残骸
-mesh('eno:mesh_copper', 'eno_ex_coppermesh_0', 2500, { group: 'eno:itemGroup.name.mesh' })           // 铜网：燧石网 + 4 铜锭
-mesh('eno:meshco_copper', 'eno_ex_cocoppermesh_0', 10000, { group: 'eno:itemGroup.name.mesh' })      // 重型铜网：4 张铜网
+// 2.5：铜网、重型铜网移除（作者决定：铜不做工具，铜锤也去掉配方）
+
+// ---- 2.5 新增：女巫水桶（女巫水只能在木桶里生成，用桶舀到木坩埚炼药）----
+item('eno:bucket_witch_water', 'eno_bucket_witch_water', { stack: 1 })
+item('eno:bucket_porcelain_witch_water', 'eno_bucket_porcelain_witch_water', { stack: 1 })
+
+// ---- 2.6 深板岩 / 凝灰岩链（docs/拓展：深板岩链、凝灰岩链）----
+item('eno:deepslate_pebble', 'eno_deepslate_pebble')   // 深板岩石子：筛泥土 5%、筛沙砾 8%、锤粉碎深板岩 3–5 个
+item('eno:tuff_pebble', 'eno_tuff_pebble')             // 凝灰岩石子：筛粉碎深板岩 15%

@@ -15,13 +15,12 @@ const sievable = (g: 'ex' | 'co', id: string) => { const l = SIEVE.groups[g].con
 /** 掉落：筛 input 时以 chance% 的基础概率掉 min~max 个 item */
 const addSieved = (input: string, item: string, min: number, max: number, chance: number) => { (SIEVE.drops[input] ||= []).push({ item, min, max, chance }) }
 
-// 网的倍率：升级链 木 → 线 → 燧石 → 铜 → 铁 → 钻石（2.4 改为乘法：原来的"加法"会把 1% 的钻石在铁网下放大 6 倍）
+// 网的倍率：升级链 木 → 线 → 燧石 → 铁 → 钻石（2.4 改为乘法：原来的"加法"会把 1% 的钻石在铁网下放大 6 倍；2.5 去掉铜网）
 registerMesh('ex', 'eno:mesh_wood', 1.0, 130)
 registerMesh('ex', 'eno:mesh_silk', 1.1, 832)
 registerMesh('ex', 'eno:mesh_flint', 1.2, 1664)
 registerMesh('ex', 'eno:mesh_iron', 1.5, 3328)
 registerMesh('ex', 'eno:mesh_diamond', 2.0, 6656)
-registerMesh('ex', 'eno:mesh_copper', 1.35, 2500)
 sievable('ex', 'minecraft:dirt')
 sievable('ex', 'minecraft:sand')
 sievable('ex', 'minecraft:gravel')
@@ -29,12 +28,14 @@ sievable('ex', 'minecraft:soul_sand')
 sievable('ex', 'eno:dust')
 sievable('ex', 'eno:gravel_nether')
 sievable('ex', 'eno:gravel_ender')
+sievable('ex', 'minecraft:red_sand')   // 2.5：恶地等开局本来就有红沙
+sievable('ex', 'eno:crushed_deepslate')   // 2.6
+sievable('ex', 'eno:crushed_tuff')        // 2.6
 
 registerMesh('co', 'eno:meshco_silk', 1.1, 3328)
 registerMesh('co', 'eno:meshco_flint', 1.2, 6656)
 registerMesh('co', 'eno:meshco_iron', 1.5, 13312)
 registerMesh('co', 'eno:meshco_diamond', 2.0, 26624)
-registerMesh('co', 'eno:meshco_copper', 1.35, 10000)
 sievable('co', 'eno:compressed_dirt')
 sievable('co', 'eno:compressed_dust')
 sievable('co', 'eno:compressed_sand')
@@ -58,6 +59,8 @@ addSieved('minecraft:dirt', 'eno:seeds_berries', 1, 1, 3)
 addSieved('minecraft:dirt', 'eno:seeds_grass', 1, 1, 7)
 addSieved('minecraft:dirt', 'eno:seeds_canes', 1, 1, 7)
 addSieved('minecraft:dirt', 'eno:stone_small', 2, 4, 100)
+addSieved('minecraft:dirt', 'minecraft:beetroot_seeds', 1, 1, 2)
+addSieved('minecraft:dirt', 'eno:deepslate_pebble', 1, 1, 5)   // 2.6：深板岩石子（与普通小石子分开判定）   // 2.5：甜菜种子（原来没有来源）
 // eno:compressed_dirt（重型筛：同一张表，每次结算 6 轮）
 addSieved('eno:compressed_dirt', 'minecraft:wheat_seeds', 1, 2, 7)
 addSieved('eno:compressed_dirt', 'minecraft:pumpkin_seeds', 1, 1, 7)
@@ -74,6 +77,8 @@ addSieved('eno:compressed_dirt', 'eno:seeds_berries', 1, 1, 3)
 addSieved('eno:compressed_dirt', 'eno:seeds_grass', 1, 1, 7)
 addSieved('eno:compressed_dirt', 'eno:seeds_canes', 1, 1, 7)
 addSieved('eno:compressed_dirt', 'eno:stone_small', 2, 4, 100)
+addSieved('eno:compressed_dirt', 'minecraft:beetroot_seeds', 1, 1, 2)
+addSieved('eno:compressed_dirt', 'eno:deepslate_pebble', 1, 1, 5)
 
 // ---- 沙子（中等颗粒）：铁 / 铜 / 金矿石碎块；植物；粗盐 ----
 addSieved('minecraft:sand', 'eno:iron_crushed', 1, 4, 20)
@@ -104,6 +109,7 @@ addSieved('minecraft:gravel', 'minecraft:lapis_lazuli', 1, 3, 10)
 addSieved('minecraft:gravel', 'minecraft:diamond', 1, 1, 1)
 addSieved('minecraft:gravel', 'minecraft:emerald', 1, 1, 0.5)
 addSieved('minecraft:gravel', 'eno:salt_crude', 1, 1, 5)
+addSieved('minecraft:gravel', 'eno:deepslate_pebble', 1, 1, 8)
 // eno:compressed_gravel（重型筛：同一张表，每次结算 6 轮）
 addSieved('eno:compressed_gravel', 'minecraft:flint', 1, 3, 25)
 addSieved('eno:compressed_gravel', 'eno:iron_broken', 1, 4, 25)
@@ -114,16 +120,19 @@ addSieved('eno:compressed_gravel', 'minecraft:lapis_lazuli', 1, 3, 10)
 addSieved('eno:compressed_gravel', 'minecraft:diamond', 1, 1, 1)
 addSieved('eno:compressed_gravel', 'minecraft:emerald', 1, 1, 0.5)
 addSieved('eno:compressed_gravel', 'eno:salt_crude', 1, 1, 5)
+addSieved('eno:compressed_gravel', 'eno:deepslate_pebble', 1, 1, 8)
 
 // ---- 灵魂沙：石英由"33%、1–6 个"改为"50%、1–4 个"（每次的期望几乎不变）。
 //      空手保护 K = 1 意味着至少每两次出一样，总概率低于 50% 的表无法保持原来的平均，所以把石英的概率提上来、数量收窄 ----
 addSieved('minecraft:soul_sand', 'minecraft:quartz', 1, 4, 50)
 addSieved('minecraft:soul_sand', 'minecraft:nether_wart', 1, 2, 5)
 addSieved('minecraft:soul_sand', 'minecraft:ghast_tear', 1, 1, 2)
+addSieved('minecraft:soul_sand', 'eno:debris_fragment', 1, 1, 1)   // 2.5：灵魂沙也出远古残骸碎片（比下界沙砾低）
 // eno:compressed_soulsand（重型筛：同一张表，每次结算 6 轮）
 addSieved('eno:compressed_soulsand', 'minecraft:quartz', 1, 4, 50)
 addSieved('eno:compressed_soulsand', 'minecraft:nether_wart', 1, 2, 5)
 addSieved('eno:compressed_soulsand', 'minecraft:ghast_tear', 1, 1, 2)
+addSieved('eno:compressed_soulsand', 'eno:debris_fragment', 1, 1, 1)
 
 // 粗盐（2.4.2 上调）：尘土 12%、沙子 8%、沙砾 5%（原定 8 / 5 / 3，实测"几乎筛不到"）
 // ---- 尘土（细颗粒）：矿石粉末与粉状物；骨粉 20 → 15（瓷土可用灰烬代替）；萤石粉 6 → 10（降低末地石的门槛） ----
@@ -157,3 +166,31 @@ addSieved('eno:gravel_nether', 'eno:debris_fragment', 1, 1, 4)
 addSieved('eno:gravel_ender', 'eno:ender_iron_broken', 1, 4, 40)
 addSieved('eno:gravel_ender', 'eno:seeds_chorus', 1, 1, 8)
 addSieved('eno:gravel_ender', 'minecraft:ender_pearl', 1, 1, 3)
+
+// ---- 2.5 红沙：恶地等开局本来就有；掉落与沙子相同，金更多（原版恶地有额外的金矿脉） ----
+addSieved('minecraft:red_sand', 'eno:iron_crushed', 1, 4, 20)
+addSieved('minecraft:red_sand', 'eno:copper_crushed', 1, 4, 24)
+addSieved('minecraft:red_sand', 'eno:gold_crushed', 1, 4, 12)
+addSieved('minecraft:red_sand', 'minecraft:cocoa_beans', 1, 2, 3)
+addSieved('minecraft:red_sand', 'eno:seeds_jungle', 1, 1, 3)
+addSieved('minecraft:red_sand', 'eno:seeds_cactus', 1, 1, 2)
+addSieved('minecraft:red_sand', 'eno:spores', 1, 2, 1)
+addSieved('minecraft:red_sand', 'eno:salt_crude', 1, 1, 8)
+
+// ---- 2.6 粉碎深板岩：深层偏向——铁、铜、煤低于沙砾，金、红石、青金石、钻石、绿宝石高于沙砾；另出紫水晶碎片和凝灰岩石子 ----
+// 与沙砾链相比，每筛一次多花约 2 次锤击和 1 次合成（深板岩 → 粉碎 → 锤成石子 → 合成深板岩），所以深层矿物给得更多
+addSieved('eno:crushed_deepslate', 'eno:iron_broken', 1, 4, 18)
+addSieved('eno:crushed_deepslate', 'eno:copper_broken', 1, 4, 20)
+addSieved('eno:crushed_deepslate', 'minecraft:coal', 1, 2, 8)
+addSieved('eno:crushed_deepslate', 'eno:gold_broken', 1, 4, 12)
+addSieved('eno:crushed_deepslate', 'minecraft:redstone', 1, 3, 15)
+addSieved('eno:crushed_deepslate', 'minecraft:lapis_lazuli', 1, 3, 15)
+addSieved('eno:crushed_deepslate', 'minecraft:diamond', 1, 1, 2.5)
+addSieved('eno:crushed_deepslate', 'minecraft:emerald', 1, 1, 1)
+addSieved('eno:crushed_deepslate', 'minecraft:amethyst_shard', 1, 1, 3)
+addSieved('eno:crushed_deepslate', 'eno:tuff_pebble', 1, 1, 15)
+// ---- 2.6 粉碎凝灰岩：铁矿脉专精（不自持：凝灰岩只从深板岩链来） ----
+addSieved('eno:crushed_tuff', 'eno:iron_broken', 2, 4, 75)
+addSieved('eno:crushed_tuff', 'minecraft:iron_nugget', 1, 3, 20)
+addSieved('eno:crushed_tuff', 'minecraft:amethyst_shard', 1, 1, 1)
+addSieved('eno:crushed_tuff', 'eno:tuff_pebble', 1, 1, 5)

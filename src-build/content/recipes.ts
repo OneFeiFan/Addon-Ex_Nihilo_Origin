@@ -99,10 +99,7 @@ shaped('eno:meshco_iron', 1, ['oo ', 'oo '], { o: 'eno:mesh_iron' })
 shaped('eno:meshco_diamond', 1, ['oo ', 'oo '], { o: 'eno:mesh_diamond' })
 shaped('eno:mesh_silk', 1, ['ooo', 'ooo', 'ooo'], { o: 'minecraft:string' })
 shaped('eno:mesh_flint', 1, ['b b', 'bob', 'b b'], { o: 'eno:mesh_silk', b: 'minecraft:flint' })
-// 2.4：升级链 燧石网 → 铜网 → 铁网
-shaped('eno:mesh_copper', 1, ['b b', 'bob', 'b b'], { o: 'eno:mesh_flint', b: 'minecraft:copper_ingot' })
-shaped('eno:mesh_iron', 1, ['b b', 'bob', 'b b'], { o: 'eno:mesh_copper', b: 'minecraft:iron_ingot' })
-shaped('eno:meshco_copper', 1, ['oo ', 'oo '], { o: 'eno:mesh_copper' })
+shaped('eno:mesh_iron', 1, ['b b', 'bob', 'b b'], { o: 'eno:mesh_flint', b: 'minecraft:iron_ingot' })
 shaped('eno:mesh_diamond', 1, ['b b', 'bob', 'b b'], { o: 'eno:mesh_iron', b: 'minecraft:diamond' })
 shaped('minecraft:cobblestone', 1, ['bb', 'bb'], { b: 'eno:stone_small' })
 shaped('eno:porcelain', 1, ['ba'], { b: 'minecraft:clay_ball', a: 'minecraft:bone_meal' })
@@ -155,5 +152,9 @@ for (const meat of ['beef', 'cooked_beef', 'porkchop', 'cooked_porkchop', 'chick
 }
 
 // ---- 2.4 新增 ----
-shaped('eno:hammers_copper', 1, [' w ', ' hw', 'h  '], { w: 'minecraft:copper_ingot', h: 'minecraft:stick' })   // 铜锤：耐久 190、速度 5
 shaped('minecraft:ancient_debris', 1, ['nn', 'nn'], { n: 'eno:debris_fragment' })                              // 4 个远古残骸碎片 → 远古残骸
+
+// ---- 2.6 深板岩 / 凝灰岩链 ----
+shapeless('minecraft:deepslate', 1, ['eno:deepslate_pebble', 'eno:deepslate_pebble', 'eno:stone_small', 'eno:stone_small'])   // 早期过渡：2 深板岩石子 + 2 小石子
+shaped('minecraft:deepslate', 2, [' p ', 'pcp', ' p '], { p: 'eno:deepslate_pebble', c: 'minecraft:cobblestone' })          // 中期主力：4 深板岩石子 + 1 圆石（十字）→ 2
+shaped('minecraft:tuff', 1, ['pp', 'pp'], { p: 'eno:tuff_pebble' })

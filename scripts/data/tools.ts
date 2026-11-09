@@ -1,10 +1,10 @@
 // 锤子 / 钩子的运行期数据
 // 对应原模组：TOOL/Hammer.js（EXCore.transformation）、TOOL/Crook.js
 
-export interface HammerRule { out: string, count: number | 'ore' }
+export interface HammerRule { out: string, count: number | 'ore' | [number, number] }
 export const HAMMER_TABLE: Record<string, HammerRule> = {}
-/** 锤子挖 from 时掉落 count 个 out；count 为 'ore' 时按 3% / 12% / 20% / 65% 出 7 / 6 / 5 / 4 个 */
-const transformation = (from: string, out: string, count: number | 'ore') => { HAMMER_TABLE[from] = { out, count } }
+/** 锤子挖 from 时掉落 count 个 out；count 为 'ore' 时按 3% / 12% / 20% / 65% 出 7 / 6 / 5 / 4 个，为 [最少, 最多] 时均匀随机 */
+const transformation = (from: string, out: string, count: number | 'ore' | [number, number]) => { HAMMER_TABLE[from] = { out, count } }
 
 transformation('minecraft:cobblestone', 'minecraft:gravel', 1)
 transformation('minecraft:gravel', 'minecraft:sand', 1)
@@ -20,7 +20,13 @@ transformation('eno:compressed_cobblestone', 'minecraft:gravel', 9)
 transformation('eno:compressed_gravel', 'minecraft:sand', 9)
 transformation('eno:compressed_sand', 'eno:dust', 9)
 transformation('eno:compressed_netherrack', 'eno:gravel_nether', 9)
+transformation('minecraft:netherrack', 'eno:gravel_nether', 1)   // 2.5：普通锤子锤地狱岩也得到下界沙砾（粉碎地狱岩）
 transformation('eno:compressed_endstone', 'eno:gravel_ender', 9)
+// 2.6 深板岩 / 凝灰岩链：深板岩 → 粉碎深板岩（筛：深层矿物；锤：3–5 个深板岩石子，二选一），凝灰岩 → 粉碎凝灰岩（筛：铁）
+transformation('minecraft:deepslate', 'eno:crushed_deepslate', 1)
+transformation('minecraft:cobbled_deepslate', 'eno:crushed_deepslate', 1)
+transformation('eno:crushed_deepslate', 'eno:deepslate_pebble', [3, 5])
+transformation('minecraft:tuff', 'eno:crushed_tuff', 1)
 transformation('eno:iron_gravel', 'eno:iron_crushed', 'ore')
 transformation('eno:iron_sand', 'eno:iron_powdered', 'ore')
 transformation('eno:copper_gravel', 'eno:copper_crushed', 'ore')   // 2.4

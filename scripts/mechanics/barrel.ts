@@ -4,9 +4,11 @@
 // 原模组的"进度"：threadProcess() = |sin(经过的 tick × 0.09°)|，满 1000 tick（50 秒）到 1 —— 发酵、各种液体反应都按这个时长。
 // 这里不用世界时间戳（重进世界会归零），改为累计"处理中经过的 tick 数" proc，效果相同。
 // 暂未移植：漏斗输入输出（StorageInterface）、作者之钩打开的测试界面。
-import { world, system, Block, Player, ItemStack, Dimension, Entity, BlockDynamicPropertiesComponent, Vector3, WeatherType } from '@minecraft/server'
+import { world, system, Block, Player, ItemStack, Dimension, Entity, BlockDynamicPropertiesComponent, Vector3, WeatherType, BlockPermutation } from '@minecraft/server'
 import { registerBlockComponent } from '@sapdon/runtime'
-import { COMPOST, LIQUID_RECIPES, BUCKETS, FILL, LIQUID_LIMITS, LIQUID_TEXTURE, OUTPUT_TEXTURE, compostTexture, SALT_PER_BRINE, DISSOLVE_TICKS, PRECIPITATE_TICKS, precipitate, PRECIPITATE, SALT_TEXTURE } from '../data/barrel.js'
+import { COMPOST, LIQUID_RECIPES, BUCKETS, FILL, LIQUID_LIMITS, LIQUID_TEXTURE, OUTPUT_TEXTURE, compostTexture, SALT_PER_BRINE, DISSOLVE_TICKS, PRECIPITATE_TICKS, precipitate, PRECIPITATE, SALT_TEXTURE,
+    FREEZE_TICKS, FREEZE_Y, FREEZE_LIGHT, MELT_LIGHT, FROST_TEXTURE, GEODE_STEPS, GEODE_TICK, GEODE_FAILS, AMETHYST_STAGES } from '../data/barrel.js'
+import { brightness, blockLight } from '../lib/light.js'
 import { consumeMainhand } from '../lib/tool.js'
 
 /** 沉淀出的粉盐（显示成彩色结晶层） */
@@ -22,8 +24,10 @@ interface State {
     liq: string, amt: number          // liquidStorage（同时只有一种液体，0–1 桶）
     proc: number, refresh: boolean, ferm: boolean, vol: number
     salt: number, ash: number, extra: string   // 2.4：已放入的粗盐、灰烬；extra = 其余产物（JSON）
+    ice: number, thaw: number                  // 2.5：结冰进度、融化进度（tick）
+    gfail: number                              // 2.7：母岩溶液连续失败的次数（剩余的生长次数 = amt × 4）
 }
-const EMPTY: State = { inId: '', inN: 0, cId: '', cN: 0, outId: '', outN: 0, liq: '', amt: 0, proc: 0, refresh: false, ferm: false, vol: 0, salt: 0, ash: 0, extra: '' }
+const EMPTY: State = { inId: '', inN: 0, cId: '', cN: 0, outId: '', outN: 0, liq: '', amt: 0, proc: 0, refresh: false, ferm: false, vol: 0, salt: 0, ash: 0, extra: '', ice: 0, thaw: 0, gfail: 0 }
 const dp = (b: Block) => b.getComponent('minecraft:dynamic_properties') as BlockDynamicPropertiesComponent | undefined
 function load(b: Block): State {
     const s = dp(b), st: any = { ...EMPTY }
@@ -58,6 +62,8 @@ const rainsHere = (b: Block) => { if (b.dimension.id !== 'minecraft:overworld') 
 function tick(b: Block, material: string) {
     const before = load(b), st: State = { ...before }
     liquidInteract(b, st, material)
+    freeze(b, st)
+    geode(b, st)
     if (!b.isValid || b.typeId === 'minecraft:lava') { removeContent(b.dimension, b.location); return }   // 木桶被岩浆烧掉了
     if (!st.refresh) st.proc = 0; else st.proc += STEP    // setOrigin：不在处理时进度归零
 
@@ -84,6 +90,55 @@ function tick(b: Block, material: string) {
     show(b, st)
 }
 
+/** 2.7 母岩溶液：随机刻时在东南西北和下方挑一个位置长 / 推进紫水晶芽 */
+const GEODE_DIRS: [number, number, number, string][] = [[1, 0, 0, 'east'], [-1, 0, 0, 'west'], [0, 0, 1, 'south'], [0, 0, -1, 'north'], [0, -1, 0, 'down']]
+function geode(b: Block, st: State) {
+    if (st.liq !== 'geode' || Math.random() >= 2 / GEODE_TICK) return   // 每 2 tick 调用一次，平均 GEODE_TICK tick 一次随机刻
+    const options: { block: Block, next: string, face: string }[] = []
+    for (const [dx, dy, dz, face] of GEODE_DIRS) {
+        const n = b.dimension.getBlock({ x: b.location.x + dx, y: b.location.y + dy, z: b.location.z + dz })
+        if (!n) continue
+        if (n.typeId === 'minecraft:air') options.push({ block: n, next: AMETHYST_STAGES[0], face })
+        else {
+            const i = AMETHYST_STAGES.indexOf(n.typeId)
+            let sameFace = false
+            try { sameFace = n.permutation.getState('minecraft:block_face' as any) === face } catch { }
+            if (i >= 0 && i < AMETHYST_STAGES.length - 1 && sameFace) options.push({ block: n, next: AMETHYST_STAGES[i + 1], face })
+        }
+    }
+    const steps = Math.round(st.amt * GEODE_STEPS)
+    if (!options.length || steps <= 0) {   // 饱和或岩浆用完：记一次失败，连续 5 次后凝固
+        st.gfail += 1
+        if (st.gfail >= GEODE_FAILS) {
+            st.liq = ''; st.amt = 0; st.gfail = 0
+            st.outId = 'minecraft:amethyst_shard'; st.outN = 2 + Math.floor(Math.random() * 2)   // 右键敲掉：2–3 个碎片
+            b.dimension.playSound('place.amethyst_block' as any, { x: b.location.x + 0.5, y: b.location.y + 1, z: b.location.z + 0.5 })
+        }
+        return
+    }
+    const o = options[Math.floor(Math.random() * options.length)]
+    try {
+        o.block.setPermutation(BlockPermutation.resolve(o.next, { 'minecraft:block_face': o.face } as any))
+        st.amt = (steps - 1) / GEODE_STEPS; st.gfail = 0
+        b.dimension.playSound('chime.amethyst_block' as any, o.block.center())
+    } catch { st.gfail += 1 }
+}
+
+/** 2.5 结冰 / 融化：只在"满满一桶清水、没有别的事在进行"时结冰；冰块没取走时可能融化 */
+function freeze(b: Block, st: State) {
+    const above = { x: b.location.x, y: b.location.y + 1, z: b.location.z }
+    if (st.outId === 'minecraft:ice') {
+        if (blockLight(b.dimension, above) >= MELT_LIGHT) st.thaw += STEP; else st.thaw = Math.max(0, st.thaw - STEP)
+        if (st.thaw >= FREEZE_TICKS) { st.outId = ''; st.outN = 0; st.thaw = 0; st.liq = 'water'; st.amt = 1 }
+        return
+    }
+    st.thaw = 0
+    const idle = st.liq === 'water' && st.amt >= 1 && !st.outId && !st.salt && !st.inId && !(st.refresh && st.ice <= 0)
+    const cold = idle && b.location.y >= FREEZE_Y && brightness(b.dimension, above) <= FREEZE_LIGHT
+    if (cold) st.ice += STEP; else if (st.ice > 0) st.ice = Math.max(0, st.ice - STEP)   // 条件不满足时进度倒退
+    if (st.ice >= FREEZE_TICKS) { st.ice = 0; takeLiquid(st, 1); st.outId = 'minecraft:ice'; st.outN = 1 }
+}
+
 function liquidInteract(b: Block, st: State, material: string) {
     const at = (dy: number) => b.dimension.getBlock({ x: b.location.x, y: b.location.y + dy, z: b.location.z })
     switch (st.liq) {
@@ -107,7 +162,7 @@ function liquidInteract(b: Block, st: State, material: string) {
                 if (st.proc >= DISSOLVE_TICKS) { st.liq = 'brine'; st.salt = 0; st.refresh = false }
                 break
             }
-            if (st.salt > 0) break
+            if (st.salt > 0 || st.ice > 0) break
             // 满桶水 + 下方菌丝：50 秒后变成女巫水
             if (st.amt >= 1 && at(-1)?.typeId === 'minecraft:mycelium') {
                 st.refresh = true
@@ -142,6 +197,13 @@ function click(b: Block, player: Player) {
     const before = load(b), st: State = { ...before }
     const held = player.getComponent('minecraft:equippable')?.getEquipment('Mainhand' as any)
     const id = held?.typeId ?? ''
+    if (st.ice > 0) return   // 2.5：结冰中不接受任何操作
+    if (st.liq === 'geode') return   // 2.7：母岩溶液只执行紫水晶生长，不接受任何操作（要恢复：等它凝固后敲掉，或打掉木桶）
+    if (id === 'minecraft:amethyst_shard' && st.liq === 'lava' && st.amt >= 1 && !st.outId) {   // 2.7：岩浆 + 紫水晶碎片 → 母岩溶液
+        consumeMainhand(player); st.liq = 'geode'; st.amt = 1; st.gfail = 0; st.refresh = false
+        b.dimension.playSound('resonate.amethyst_block' as any, { x: b.location.x + 0.5, y: b.location.y + 1, z: b.location.z + 0.5 })
+        save(b, st, before); show(b, st); return
+    }
     const bucket = BUCKETS[id], full = FILL[id]?.[st.liq], recipe = LIQUID_RECIPES[st.liq]?.[id], compostable = COMPOST[id]
 
     if (bucket) {   // setLiquid
@@ -196,7 +258,9 @@ function contentEntity(d: Dimension, l: Vector3, create: boolean): Entity | unde
 function removeContent(d: Dimension, l: Vector3) { const e = contentEntity(d, l, false); if (e) { contents.delete(keyOf(d, l)); try { e.remove() } catch { } } }
 function show(b: Block, st: State) {
     let h = 0, t = 0
-    if (st.outId && OUTPUT_TEXTURE[st.outId] !== undefined) { h = 1000; t = OUTPUT_TEXTURE[st.outId] }
+    if (st.outId === 'minecraft:ice' && st.thaw > 0) { h = 1000; t = FROST_TEXTURE[Math.min(3, Math.floor(st.thaw / FREEZE_TICKS * 4))] }   // 融化：裂纹越来越多
+    else if (st.ice > 0) { h = 1000; t = FROST_TEXTURE[3 - Math.min(3, Math.floor(st.ice / FREEZE_TICKS * 4))] }                         // 结冰：裂纹慢慢合拢
+    else if (st.outId && OUTPUT_TEXTURE[st.outId] !== undefined) { h = 1000; t = OUTPUT_TEXTURE[st.outId] }
     else if (st.outId && SALTS.has(st.outId)) { h = 1000; t = SALT_TEXTURE.sediment }   // 2.4.2：沉淀出的粉盐还没取走——桶里显示一层彩色结晶
     else if (st.liq === 'water' && st.salt > 0) {   // 放了几个粗盐就有多少盐晶；放够 4 个后随溶解进度盐晶变少、水变浑
         h = Math.round(1000 * st.amt)

@@ -1,5 +1,6 @@
 // 诅咒之土、末影蛋糕、紫颂苗：逐行对照 BLOCKS/cruseearth.js、BLOCKS/endercake.js、BLOCKS/chorussprout.js
 import { world, system, Block, Dimension, Vector3, ItemStack, Player, GameMode, EquipmentSlot, BlockDynamicPropertiesComponent } from '@minecraft/server'
+import { brightness } from '../lib/light.js'
 import { registerBlockComponent } from '@sapdon/runtime'
 import { fertilizeWith } from './fertilizer.js'
 
@@ -13,20 +14,12 @@ import { fertilizeWith } from './fertilizer.js'
 // 原模组每 tick 运行；这里每 20 tick 运行一次，计数按 20 累计，670 tick 的刷怪周期按累计 tick 判定。
 const STEP = 20
 const ENTITY_MAX = 35
+const ZOMBIE_VILLAGER = 0.05
 const MOBS: [string, number][] = [['minecraft:zombie', 12.5], ['minecraft:creeper', 13.5], ['minecraft:skeleton', 12.5], ['minecraft:spider', 6], ['minecraft:witch', 5], ['minecraft:enderman', 2]]
 const ANIMALS = new Set(['minecraft:chicken', 'minecraft:cow', 'minecraft:pig', 'minecraft:sheep', 'minecraft:wolf', 'minecraft:villager', 'minecraft:villager_v2', 'minecraft:mooshroom', 'minecraft:squid', 'minecraft:rabbit'])
 const NOT_DAMAGED = new Set(['minecraft:item', 'minecraft:tnt', 'minecraft:falling_block', 'minecraft:xp_bottle', 'minecraft:xp_orb', 'minecraft:fishing_hook', 'minecraft:arrow', 'minecraft:snowball', 'minecraft:egg', 'minecraft:painting', 'minecraft:minecart', 'minecraft:fireball', 'minecraft:splash_potion', 'minecraft:boat', 'minecraft:lightning_bolt', 'minecraft:small_fireball'])
 const SPREAD_ORDER = [[1, 0, 0], [0, 1, 0], [0, 0, 1], [-1, 0, 0], [0, 0, -1], [0, -1, 0]]
 
-/** 原模组 World.getLightLevel 计入昼夜：天空光按时间减弱（夜里减 11）。基岩版接口只有总亮度和天空光，方块光按"总亮度高出天空光的部分"估算 */
-function brightness(dim: Dimension, at: Vector3) {
-    let total = 0, sky = 0
-    try { total = dim.getLightLevel(at); sky = dim.getSkyLightLevel(at) } catch { return 0 }
-    const t = world.getTimeOfDay()
-    const darken = t < 12000 ? 0 : t < 13800 ? (t - 12000) / 1800 * 11 : t < 22200 ? 11 : t < 24000 ? (24000 - t) / 1800 * 11 : 0
-    const blockLight = total > sky ? total : 0
-    return Math.max(blockLight, Math.round(sky - darken))
-}
 const dp = (b: Block) => b.getComponent('minecraft:dynamic_properties') as BlockDynamicPropertiesComponent | undefined
 const isSoil = (b?: Block) => b?.typeId === 'minecraft:grass_block' || b?.typeId === 'minecraft:dirt'
 
@@ -62,7 +55,11 @@ registerBlockComponent('eno:cursed_earth', {
         if (Math.floor(age / 670) !== Math.floor((age - STEP) / 670) && light <= 6) {
             const near = dimension.getEntities({ location: top, maxDistance: 20 }).length
             const spawned: string[] = []
-            if (near < ENTITY_MAX) for (const [mob, chance] of MOBS) if (Math.random() * 100 < chance) { dimension.spawnEntity(mob as any, { x: l.x + 0.5, y: l.y + 1.5, z: l.z + 0.5 }); spawned.push(mob) }
+            if (near < ENTITY_MAX) for (const [m, chance] of MOBS) if (Math.random() * 100 < chance) {
+                // 2.5 村民线：生成僵尸时有 5% 是僵尸村民（原版自然生成的僵尸里本来就有一部分是僵尸村民），玩家用虚弱药水 + 金苹果治愈
+                const mob = m === 'minecraft:zombie' && Math.random() < ZOMBIE_VILLAGER ? 'minecraft:zombie_villager_v2' : m
+                dimension.spawnEntity(mob as any, { x: l.x + 0.5, y: l.y + 1.5, z: l.z + 0.5 }); spawned.push(mob)
+            }
         }
         for (const e of dimension.getEntities({ location: top, maxDistance: 1 })) if (ANIMALS.has(e.typeId)) { dimension.spawnEntity('minecraft:lightning_bolt' as any, { x: l.x, y: l.y, z: l.z }); break }
     },

@@ -16,6 +16,7 @@ export const LIQUID_TEXTURE: Record<string, number> = {
     waterwitch: tex('textures/entity/eno/barrel/ex_waterwitch'),
     waterslime: tex('textures/entity/eno/barrel/ex_waterslime'),
     brine: tex('textures/entity/eno/barrel/ex_brine'),   // 2.4：卤水（粗盐溶在水里）
+    geode: tex('textures/entity/eno/barrel/ex_geode'),   // 2.7：母岩溶液（岩浆 + 紫水晶碎片）
 }
 /**
  * 盐反应的过程显示（贴图由 tools/gen_salt_textures.py 生成）：
@@ -37,6 +38,7 @@ export const OUTPUT_TEXTURE: Record<string, number> = {
     'minecraft:netherrack': tex('textures/blocks/netherrack'),
     'minecraft:clay': tex('textures/blocks/clay'),
     'minecraft:ice': tex('textures/blocks/ice'),
+    'minecraft:amethyst_shard': tex('textures/blocks/amethyst_block'),   // 2.7：母岩溶液凝固后
     'minecraft:soul_sand': tex('textures/blocks/soul_sand'),
     'minecraft:slime_ball': tex('textures/entity/eno/barrel/ex_slime'),
 }
@@ -113,6 +115,47 @@ compost('minecraft:kelp', 125, 1)
 compost('eno:silk_worm', 40, 7)
 compost('eno:cooked_silk_worm', 40, 16)
 
+// ---- 2.8 生物群系有机物（1.13 以后的新植物、下界植物、海洋生物等）----
+// 体积按与已有物品的相似程度定：小植物 / 叶子 ≈ 树苗 125；花 100；薄的（地毯、花簇、海草）50–60；
+// 方块大小的植物（苔藓块、菌岩、菌光体、蘑菇方块、珊瑚块）≈ 西瓜 / 南瓜 166.7（6 个一块泥土）；
+// 浆果等小果实 ≈ 西瓜片 40；储存方块（干草块、干海带块）≈ 装满一桶。木头类（菌柄、树干）不能堆肥。
+// 底色（最后一个数）取 ex_0..ex_20 里最接近的颜色：1 绿、5 红、17 青绿、14 黄、4 / 10 粉紫、16 棕、13 土黄、0 白。
+const organics: [string, number, number][] = [
+    // 原版早就有、但原模组漏掉的
+    ['minecraft:short_grass', 80, 1], ['minecraft:fern', 80, 1], ['minecraft:deadbush', 80, 16], ['minecraft:cornflower', 100, 6],
+    ['minecraft:lily_of_the_valley', 100, 0], ['minecraft:beetroot', 80, 3], ['minecraft:bread', 160, 13], ['minecraft:cookie', 40, 16],
+    ['minecraft:cake', 500, 0], ['minecraft:hay_block', 1000, 13], ['minecraft:dried_kelp', 100, 16], ['minecraft:dried_kelp_block', 900, 16],
+    // 浆果
+    ['minecraft:sweet_berries', 40, 5], ['minecraft:glow_berries', 40, 9],
+    // 新树种与林下植物
+    ['minecraft:cherry_sapling', 125, 10], ['minecraft:cherry_leaves', 125, 10], ['minecraft:pink_petals', 50, 10],
+    ['minecraft:mangrove_propagule', 125, 1], ['minecraft:mangrove_leaves', 125, 1], ['minecraft:mangrove_roots', 100, 16],
+    ['minecraft:azalea', 125, 1], ['minecraft:flowering_azalea', 125, 4], ['minecraft:azalea_leaves', 125, 1], ['minecraft:azalea_leaves_flowered', 125, 4],
+    ['minecraft:pale_oak_sapling', 125, 7], ['minecraft:pale_oak_leaves', 125, 7], ['minecraft:pale_moss_block', 166.7, 7],
+    ['minecraft:pale_moss_carpet', 50, 7], ['minecraft:pale_hanging_moss', 100, 7], ['minecraft:open_eyeblossom', 100, 9], ['minecraft:closed_eyeblossom', 100, 7],
+    // 繁茂洞穴
+    ['minecraft:moss_block', 166.7, 1], ['minecraft:moss_carpet', 50, 1], ['minecraft:spore_blossom', 125, 4], ['minecraft:big_dripleaf', 125, 1],
+    ['minecraft:small_dripleaf_block', 100, 1], ['minecraft:hanging_roots', 100, 16], ['minecraft:glow_lichen', 60, 19],
+    // 嗅探兽植物、新的小植物
+    ['minecraft:torchflower', 100, 9], ['minecraft:pitcher_plant', 125, 6], ['minecraft:pitcher_pod', 60, 1],
+    ['minecraft:cactus_flower', 100, 10], ['minecraft:leaf_litter', 50, 16], ['minecraft:bush', 125, 1], ['minecraft:firefly_bush', 125, 1],
+    ['minecraft:short_dry_grass', 60, 13], ['minecraft:tall_dry_grass', 100, 13], ['minecraft:wildflowers', 50, 14],
+    // 下界植物（菌柄、菌核是木头，不能堆肥）
+    ['minecraft:crimson_fungus', 125, 5], ['minecraft:warped_fungus', 125, 17], ['minecraft:crimson_roots', 100, 5], ['minecraft:warped_roots', 100, 17],
+    ['minecraft:nether_sprouts', 60, 17], ['minecraft:weeping_vines', 100, 5], ['minecraft:twisting_vines', 100, 17],
+    ['minecraft:nether_wart_block', 166.7, 5], ['minecraft:warped_wart_block', 166.7, 17], ['minecraft:shroomlight', 166.7, 14],
+    // 蘑菇方块、紫颂
+    ['minecraft:brown_mushroom_block', 166.7, 11], ['minecraft:red_mushroom_block', 166.7, 12], ['minecraft:mushroom_stem', 166.7, 11],
+    ['minecraft:chorus_fruit', 100, 4], ['minecraft:chorus_flower', 125, 4],
+    // 海洋：海草、珊瑚（珊瑚是动物，与肉类一样可以堆肥）
+    ['minecraft:seagrass', 60, 1],
+    ...['tube', 'brain', 'bubble', 'fire', 'horn'].flatMap((c, i): [string, number, number][] => {
+        const base = [6, 4, 4, 5, 14][i]
+        return [[`minecraft:${c}_coral`, 100, base], [`minecraft:${c}_coral_fan`, 80, base], [`minecraft:${c}_coral_block`, 166.7, base]]
+    }),
+]
+for (const [item, volume, base] of organics) compost(item, volume, base)
+
 // ---------- 液体配方（Barrel.dataSet(液体, …)）：桶里有 1 桶该液体时放入物品，立即得到产物 ----------
 export const LIQUID_RECIPES: Record<string, Record<string, string>> = { water: {}, lava: {}, waterwitch: {} }
 const liquidRecipe = (liquid: string, item: string, output: string) => { LIQUID_RECIPES[liquid][item] = output }
@@ -128,11 +171,14 @@ export const BUCKETS: Record<string, { liquid: string, empty: string }> = {
     'minecraft:milk_bucket': { liquid: 'milk', empty: 'minecraft:bucket' },
     'eno:bucket_porcelain_water': { liquid: 'water', empty: 'eno:bucket_porcelain_empty' },
     'eno:bucket_porcelain_lava': { liquid: 'lava', empty: 'eno:bucket_porcelain_empty' },
+    // 2.5：女巫水桶——女巫水只能在木桶里生成，用桶舀到木坩埚炼药
+    'eno:bucket_witch_water': { liquid: 'waterwitch', empty: 'minecraft:bucket' },
+    'eno:bucket_porcelain_witch_water': { liquid: 'waterwitch', empty: 'eno:bucket_porcelain_empty' },
 }
 /** 空桶 + 液体 → 装满的桶 */
 export const FILL: Record<string, Record<string, string>> = {
-    'minecraft:bucket': { water: 'minecraft:water_bucket', lava: 'minecraft:lava_bucket' },
-    'eno:bucket_porcelain_empty': { water: 'eno:bucket_porcelain_water', lava: 'eno:bucket_porcelain_lava' },
+    'minecraft:bucket': { water: 'minecraft:water_bucket', lava: 'minecraft:lava_bucket', waterwitch: 'eno:bucket_witch_water' },
+    'eno:bucket_porcelain_empty': { water: 'eno:bucket_porcelain_water', lava: 'eno:bucket_porcelain_lava', waterwitch: 'eno:bucket_porcelain_witch_water' },
 }
 /** 空桶能装进哪些液体（LiquidSet.limitSet("Barrel")）：键为桶里当前的液体（'' = 空） */
 export const LIQUID_LIMITS: Record<string, string[]> = { '': ['water', 'lava', 'waterwitch'], water: ['water'], lava: ['lava'], waterslime: [], brine: [] }
@@ -163,3 +209,21 @@ export function precipitate(rnd = Math.random): [string, number][] {
     }
     return out
 }
+
+// ---------- 2.5 结冰（docs/木桶结冰.md）----------
+// 满满一桶水，Y ≥ 120、亮度 ≤ 7 时慢慢结冰，120 秒结成冰块（右键取出）；方块光 ≥ 12 时冰慢慢融化，120 秒变回一桶水。
+// 依据：原版的温度随高度降低（高处的水会结冰），冰在方块光大于 11 时融化。
+// 液面用原版霜冰的四帧碎裂贴图：结冰时倒着播（裂纹慢慢合拢），融化时正着播。
+export const FREEZE_TICKS = 2400, FREEZE_Y = 120, FREEZE_LIGHT = 7, MELT_LIGHT = 12
+export const FROST_TEXTURE = [0, 1, 2, 3].map((i) => tex(`textures/blocks/frosted_ice_${i}`))   // 0 = 裂纹最少
+
+// ---------- 2.7 紫水晶：木桶里的母岩溶液 ----------
+// 装 1 桶岩浆的木桶放入 1 个紫水晶碎片（消耗）→ 岩浆变成母岩溶液。之后按"随机刻"在木桶的东南西北和下方
+// 随机挑一个位置：是空气就长出小型紫水晶芽，是芽就长大一级（小 → 中 → 大 → 紫水晶簇）。每长一级消耗 1/4 桶，
+// 所以 1 桶岩浆最多长成一整簇（作者要求）；随机落在不同位置时，可能是几个没长完的芽。
+// 芽、簇都是原版方块：芽打掉什么都不掉，只有长成的簇才掉碎片（原版规则）。
+// 没有能长的位置、或岩浆用完时记一次失败，连续 5 次失败后溶液凝固；右键敲掉凝固物得到 2–3 个碎片，木桶变空。
+export const GEODE_STEPS = 4               // 1 桶岩浆 = 4 级生长 = 1 整簇
+export const GEODE_TICK = 1200             // 平均每 60 秒一次"随机刻"
+export const GEODE_FAILS = 5
+export const AMETHYST_STAGES = ['minecraft:small_amethyst_bud', 'minecraft:medium_amethyst_bud', 'minecraft:large_amethyst_bud', 'minecraft:amethyst_cluster']

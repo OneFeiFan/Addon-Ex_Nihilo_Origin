@@ -75,12 +75,10 @@ creativeGroup('eno:itemGroup.name.mesh', 'equipment', [
     'eno:mesh_wood',
     'eno:mesh_silk',
     'eno:mesh_flint',
-    'eno:mesh_copper',
     'eno:mesh_iron',
     'eno:mesh_diamond',
     'eno:meshco_silk',
     'eno:meshco_flint',
-    'eno:meshco_copper',
     'eno:meshco_iron',
     'eno:meshco_diamond',
 ])

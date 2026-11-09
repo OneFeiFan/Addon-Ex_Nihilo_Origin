@@ -21,6 +21,9 @@ desktop.ini
 .vscode/
 .idea/
 
+# 原版贴图缓存（tools/ 下的生成脚本按需从 bedrock-samples 下载）
+/tools/vanilla/
+
 # 本地规划文件（planning-with-files）
 /task_plan.md
 /findings.md
